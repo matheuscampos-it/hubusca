@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import SearchBar from '../components/SearchBar';
-import UserCard from '../components/UserCard';
 
 const Container = styled.div`
   max-width: 800px;
@@ -20,23 +19,11 @@ const Title = styled.h1`
   font-weight: bold;
 `;
 
-const RecentUsersList = styled.div`
-  margin-top: ${({ theme }) => theme.spacing.large};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.medium};
-`;
-
 const Home = () => {
   return (
     <Container>
       <Title>HUBusca</Title>
       <SearchBar />
-      <RecentUsersList>
-        {/* Exemplo de como os UserCards dos usuários pesquisados recentemente aparecerão */}
-        <UserCard user={{ name: "Nome Exemplo", login: "exemplo", location: "Exemplo City", avatar_url: "https://via.placeholder.com/150" }} />
-        {/* Outros UserCards podem ser listados aqui */}
-      </RecentUsersList>
     </Container>
   );
 };

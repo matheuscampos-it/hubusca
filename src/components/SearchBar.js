@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { fetchUserData, fetchUserRepos } from '../services/api';
+import UserCard from './UserCard'; // Assumindo que UserCard será atualizado para mostrar dados reais
 
 const Form = styled.form`
   display: flex;
@@ -34,23 +36,37 @@ const Button = styled.button`
 
 const SearchBar = () => {
   const [username, setUsername] = useState('');
+  const [user, setUser] = useState(null);
+  const [repos, setRepos] = useState([]);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aqui você vai lidar com a submissão e buscar o usuário no GitHub
-    console.log('Buscando usuário:', username);
+    try {
+      setError(null);
+      const userData = await fetchUserData(username);
+      const userRepos = await fetchUserRepos(username);
+      setUser(userData);
+      setRepos(userRepos);
+    } catch (error) {
+      setError('Usuário não encontrado ou erro na requisição.');
+    }
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Input
-        type="text"
-        placeholder="Buscar usuário do GitHub"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <Button type="submit">Buscar</Button>
-    </Form>
+    <div>
+      <Form onSubmit={handleSubmit}>
+        <Input
+          type="text"
+          placeholder="Buscar usuário do GitHub"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <Button type="submit">Buscar</Button>
+      </Form>
+      {error && <p>{error}</p>}
+      {user && <UserCard user={user} repos={repos} />}
+    </div>
   );
 };
 
