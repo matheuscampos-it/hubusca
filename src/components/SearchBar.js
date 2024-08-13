@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { fetchUserData, fetchUserRepos } from '../services/api';
-import UserCard from './UserCard'; // Assumindo que UserCard será atualizado para mostrar dados reais
+import { addRecentUser, getRecentUsers } from '../services/localStorage';
+import UserCard from './UserCard';
 
 const Form = styled.form`
   display: flex;
@@ -34,11 +35,33 @@ const Button = styled.button`
   }
 `;
 
+const RecentUsersList = styled.div`
+  margin-top: ${({ theme }) => theme.spacing.large};
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  padding-top: ${({ theme }) => theme.spacing.large};
+`;
+
+const RecentUser = styled.div`
+  padding: ${({ theme }) => theme.spacing.medium};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.hover};
+  }
+`;
+
 const SearchBar = () => {
   const [username, setUsername] = useState('');
   const [user, setUser] = useState(null);
   const [repos, setRepos] = useState([]);
   const [error, setError] = useState(null);
+  const [recentUsers, setRecentUsers] = useState([]);
+
+  useEffect(() => {
+    setRecentUsers(getRecentUsers());
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,8 +71,21 @@ const SearchBar = () => {
       const userRepos = await fetchUserRepos(username);
       setUser(userData);
       setRepos(userRepos);
+      addRecentUser(userData);
+      setRecentUsers(getRecentUsers()); // Atualiza a lista de usuários recentes
     } catch (error) {
       setError('Usuário não encontrado ou erro na requisição.');
+    }
+  };
+
+  const handleRecentUserClick = async (login) => {
+    try {
+      const userData = await fetchUserData(login);
+      const userRepos = await fetchUserRepos(login);
+      setUser(userData);
+      setRepos(userRepos);
+    } catch (error) {
+      setError('Erro ao carregar dados do usuário.');
     }
   };
 
@@ -66,6 +102,15 @@ const SearchBar = () => {
       </Form>
       {error && <p>{error}</p>}
       {user && <UserCard user={user} repos={repos} />}
+      <RecentUsersList>
+        <h3>Usuários Recentemente Pesquisados:</h3>
+        {recentUsers.map(user => (
+          <RecentUser key={user.login} onClick={() => handleRecentUserClick(user.login)}>
+            <img src={user.avatar_url} alt={user.login} style={{ width: '40px', borderRadius: '50%' }} />
+            <span>{user.login}</span>
+          </RecentUser>
+        ))}
+      </RecentUsersList>
     </div>
   );
 };
