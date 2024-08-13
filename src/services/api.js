@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const BASE_URL = 'https://api.github.com';
+
 // Configuração da base URL para as requisições à API do GitHub
 const api = axios.create({
   baseURL: 'https://api.github.com/',
@@ -24,3 +26,13 @@ export const fetchUserRepos = async (username) => {
     throw error;
   }
 };
+
+export const searchUsers = async (username) => {
+  const response = await axios.get(`${BASE_URL}/search/users`, {
+    params: {
+      q: username,
+    },
+  });
+  return response.data.items;
+};
+
