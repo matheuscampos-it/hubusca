@@ -42,7 +42,9 @@ const RecentUsersList = styled.div`
 `;
 
 const RecentUser = styled.div`
-  padding: ${({ theme }) => theme.spacing.medium};
+  display: flex;
+  align-items: center;
+  padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   cursor: pointer;
   transition: background-color 0.3s;
@@ -50,6 +52,19 @@ const RecentUser = styled.div`
   &:hover {
     background-color: ${({ theme }) => theme.colors.hover};
   }
+`;
+
+const UserImage = styled.img`
+  width: 50px; /* Tamanho um pouco maior */
+  height: 50px; /* Tamanho um pouco maior */
+  border-radius: 50%;
+  margin-right: ${({ theme }) => theme.spacing.medium};
+`;
+
+const UserName = styled.span`
+  font-size: 1rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const SearchBar = () => {
@@ -106,8 +121,8 @@ const SearchBar = () => {
         <h3>Usuários Recentemente Pesquisados:</h3>
         {recentUsers.map(user => (
           <RecentUser key={user.login} onClick={() => handleRecentUserClick(user.login)}>
-            <img src={user.avatar_url} alt={user.login} style={{ width: '40px', borderRadius: '50%' }} />
-            <span>{user.login}</span>
+            <UserImage src={user.avatar_url} alt={user.login} />
+            <UserName>{user.login}</UserName>
           </RecentUser>
         ))}
       </RecentUsersList>

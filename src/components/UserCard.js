@@ -1,3 +1,5 @@
+// src/components/UserCard.js
+
 import React from 'react';
 import styled from 'styled-components';
 
@@ -5,89 +7,88 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.cardBackground};
-  padding: ${({ theme }) => theme.spacing.medium};
+  padding: 1.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.borderRadius};
-  box-shadow: ${({ theme }) => theme.boxShadow};
-  transition: transform 0.3s, box-shadow 0.3s;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  }
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 2rem auto;
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const Avatar = styled.img`
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 3px solid ${({ theme }) => theme.colors.primary};
+  margin-bottom: 1rem;
 `;
 
-const UserInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: ${({ theme }) => theme.spacing.medium};
+const Info = styled.div`
+  text-align: center;
+  margin-bottom: 2rem;
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: ${({ theme }) => theme.colors.text};
+  }
+  p {
+    margin: 0.5rem 0;
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 
-const Name = styled.h3`
-  margin-bottom: ${({ theme }) => theme.spacing.small};
-  font-size: 1.5rem;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const Login = styled.p`
-  font-size: 1.2rem;
-  color: ${({ theme }) => theme.colors.secondary};
-`;
-
-const Location = styled.p`
-  font-size: 1rem;
-  color: ${({ theme }) => theme.colors.secondary};
-`;
-
-const ReposList = styled.div`
-  margin-top: ${({ theme }) => theme.spacing.large};
+const RepoSection = styled.div`
   width: 100%;
-`;
-
-const Repo = styled.a`
-  display: block;
-  padding: ${({ theme }) => theme.spacing.medium};
   background-color: ${({ theme }) => theme.colors.cardBackground};
   border-radius: ${({ theme }) => theme.borderRadius};
-  box-shadow: ${({ theme }) => theme.boxShadow};
-  text-decoration: none;
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.small};
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
 
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: white;
+const RepoList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const RepoItem = styled.li`
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  a {
+    color: ${({ theme }) => theme.colors.primary};
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+    display: block;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
 const UserCard = ({ user, repos }) => {
   return (
     <Card>
-      <Avatar src={user.avatar_url} alt={user.name} />
-      <UserInfo>
-        <Name>{user.name}</Name>
-        <Login>@{user.login}</Login>
-        <Location>{user.location || 'Localização não disponível'}</Location>
-      </UserInfo>
-      <ReposList>
-        <h4>Repositórios:</h4>
-        {repos.map(repo => (
-          <Repo key={repo.id} href={repo.html_url} target="_blank" rel="noopener noreferrer">
-            {repo.name}
-          </Repo>
-        ))}
-      </ReposList>
+      <Avatar src={user.avatar_url} alt={user.login} />
+      <Info>
+        <h2>{user.name || user.login}</h2>
+        <p>{user.bio}</p>
+        <p><strong>{user.public_repos}</strong> repositórios públicos</p>
+        <p><strong>{user.followers}</strong> seguidores</p>
+      </Info>
+      <RepoSection>
+        <h3>Repositórios:</h3>
+        <RepoList>
+          {repos.map(repo => (
+            <RepoItem key={repo.id}>
+              <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+                {repo.name}
+              </a>
+            </RepoItem>
+          ))}
+        </RepoList>
+      </RepoSection>
     </Card>
   );
 };
